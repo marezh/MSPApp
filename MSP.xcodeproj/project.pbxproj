@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FE0CE61E2B25C556001DDD60 /* DayEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE0CE61D2B25C556001DDD60 /* DayEditView.swift */; };
+		FE26766D2B2EEB690005BD55 /* SelectedButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE26766C2B2EEB690005BD55 /* SelectedButtonItem.swift */; };
 		FE3273A22B1C857700CC93F0 /* MSPApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3273A12B1C857700CC93F0 /* MSPApp.swift */; };
 		FE3273A42B1C857700CC93F0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3273A32B1C857700CC93F0 /* ContentView.swift */; };
 		FE3273A62B1C857B00CC93F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE3273A52B1C857B00CC93F0 /* Assets.xcassets */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		FE0CE61D2B25C556001DDD60 /* DayEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayEditView.swift; sourceTree = "<group>"; };
+		FE26766C2B2EEB690005BD55 /* SelectedButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedButtonItem.swift; sourceTree = "<group>"; };
 		FE32739E2B1C857700CC93F0 /* MSP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MSP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE3273A12B1C857700CC93F0 /* MSPApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MSPApp.swift; sourceTree = "<group>"; };
 		FE3273A32B1C857700CC93F0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -50,6 +52,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FE26766E2B2EEB740005BD55 /* Items */ = {
+			isa = PBXGroup;
+			children = (
+				FE26766C2B2EEB690005BD55 /* SelectedButtonItem.swift */,
+			);
+			path = Items;
+			sourceTree = "<group>";
+		};
 		FE3273952B1C857700CC93F0 = {
 			isa = PBXGroup;
 			children = (
@@ -76,6 +86,7 @@
 				FE3273B72B1C8BCD00CC93F0 /* Views */,
 				FECE3CAF2B236F0400F758BD /* DayTimeWrapper.swift */,
 				FECE3CB52B2469F800F758BD /* WeekViewController.swift */,
+				FE26766E2B2EEB740005BD55 /* Items */,
 				FECE3CB72B24844F00F758BD /* Model.xcdatamodeld */,
 			);
 			path = MSP;
@@ -175,6 +186,7 @@
 				FE3273B02B1C87E500CC93F0 /* SettingsView.swift in Sources */,
 				FE3273A42B1C857700CC93F0 /* ContentView.swift in Sources */,
 				FE3273B42B1C8B4700CC93F0 /* ExportView .swift in Sources */,
+				FE26766D2B2EEB690005BD55 /* SelectedButtonItem.swift in Sources */,
 				FE3273B22B1C8B2F00CC93F0 /* HomeView .swift in Sources */,
 				FE3273A22B1C857700CC93F0 /* MSPApp.swift in Sources */,
 				FE0CE61E2B25C556001DDD60 /* DayEditView.swift in Sources */,
@@ -322,8 +334,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -351,8 +363,8 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
