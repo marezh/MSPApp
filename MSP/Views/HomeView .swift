@@ -56,7 +56,11 @@ struct HomeView: View {
                                 
                             }
                             .frame(width: 20, height: 125)
+
                             .background(Color.white.opacity(0.2))
+
+                            .background(Color.black)
+
                             .cornerRadius(60)
                             Text("Mo").font(.system(size: 18)).foregroundColor(.gray)
 
@@ -66,7 +70,11 @@ struct HomeView: View {
                                 
                             }
                             .frame(width: 20, height: 125)
+
                             .background(Color.white.opacity(0.2))
+
+                            .background(Color.black)
+
                             .cornerRadius(60)
                             Text("Di").font(.system(size: 18)).foregroundColor(.gray)
 
@@ -76,7 +84,11 @@ struct HomeView: View {
                                 
                             }
                             .frame(width: 20, height: 125)
+
                             .background(Color.white.opacity(0.2))
+
+                            .background(Color.black)
+
                             .cornerRadius(60)
                             
                             Text("Mi").font(.system(size: 18)).foregroundColor(.gray)
@@ -87,18 +99,26 @@ struct HomeView: View {
                                 
                             }
                             .frame(width: 20, height: 125)
+
                             .background(Color.white.opacity(0.2))
+
+                            .background(Color.black)
+
                             .cornerRadius(60)
                             
                             Text("Do").font(.system(size: 18)).foregroundColor(.gray)
                         }
                         VStack{
-                            
+
                             HStack{
                                 
                             }
                             .frame(width: 20, height: 125)
+
                             .background(Color.white.opacity(0.2))
+
+                            .background(Color.black)
+
                             .cornerRadius(60)
                             Text("Fr").font(.system(size: 18)).foregroundColor(.gray)
 
@@ -125,6 +145,7 @@ struct HomeView: View {
                             .rotationEffect(.degrees(-90))
                     }
                     .frame(width: 130)
+                    
                 }
                 .frame(width: 180, height: 190)
                 .background(Color.black.opacity(0.3))
