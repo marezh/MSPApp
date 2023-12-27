@@ -52,7 +52,19 @@ struct DayOpenView: View {
                 
                 //Titel
                 VStack(alignment: .leading) {
-                    Text(defTagName).foregroundColor(.white).bold().font(.system(size: 28))
+                    
+                    let const = defTagName + "." + defTagDatum + "." + defMonatName + "." + defMonatDatum + "." + Jahr
+                    
+                    if const == getTimeNowForTitle(){
+                        Text("Heute").foregroundColor(.green).bold().font(.system(size: 28))
+
+                    }else {
+                        
+                        Text(defTagName).foregroundColor(.white).bold().font(.system(size: 28))
+
+                    }
+                    
+                    
                     Text(defTagDatum + "." + defMonatDatum + "." + Jahr).foregroundColor(.gray)
                     Spacer().frame(height: 660)
                 }
@@ -102,7 +114,7 @@ struct DayOpenView: View {
                     .background(Image("icon-go-back"))
                     .cornerRadius(45)
                     
-                    NavigationLink(destination: DayEditView()) {
+                    NavigationLink(destination: DayEditView(progreeda: datum)) {
                         Image("icon-add")
                             .resizable()
                             .frame(width: 35, height: 35)
@@ -117,7 +129,8 @@ struct DayOpenView: View {
             }
             .ignoresSafeArea()
             .navigationBarHidden(true)
-            .toolbar(visible ? .visible : .hidden , for: .tabBar)            .onAppear(){
+            .toolbar(visible ? .visible : .hidden , for: .tabBar)            
+            .onAppear(){
                 print("geöffnet: DayOpenView")
                 visible.toggle()
 
@@ -157,6 +170,15 @@ struct DayOpenView: View {
                 
             
         }
+    func getTimeNowForTitle() -> String {
+       var st = ""
+       let now = Date()
+       let formatter = DateFormatter()
+       formatter.dateFormat = "EEEE.d.MMMM.M.yyyy"
+       formatter.locale = Locale(identifier: "de_DE")
+       st = formatter.string(from: now)
+       return st
+   }
 
     
         
