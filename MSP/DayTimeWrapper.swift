@@ -34,13 +34,13 @@ func GetTheTimeOfDayForBackground() -> String{
     let stunde = formatter.string(from: now)
     let StundeInInt = Int(stunde) ?? 0
     
-    if StundeInInt > 12 {
-        isMorningOrDayOrNightBackground = "Hintergrund-Morgen" //Tag
+    if StundeInInt >= 12 {
+        isMorningOrDayOrNightBackground = "722618-free-download-blurry-wallpaper-750x1334-for-your-desktop-mobile-tablet-explore-blurry-wallpaper-blurry-wallpaper-blurry-desktop-wallpaper-blurry-wallpaper-windows-7" //Tag
         if StundeInInt > 17 {
-            isMorningOrDayOrNightBackground = "Hintergrund-Morgen" //Nacht
+            isMorningOrDayOrNightBackground = "722618-free-download-blurry-wallpaper-750x1334-for-your-desktop-mobile-tablet-explore-blurry-wallpaper-blurry-wallpaper-blurry-desktop-wallpaper-blurry-wallpaper-windows-7" //Nacht
         }
     }else if StundeInInt < 12 {
-        isMorningOrDayOrNightBackground = "Hintergrund-Morgen"
+        isMorningOrDayOrNightBackground = "722618-free-download-blurry-wallpaper-750x1334-for-your-desktop-mobile-tablet-explore-blurry-wallpaper-blurry-wallpaper-blurry-desktop-wallpaper-blurry-wallpaper-windows-7"
     }
     return isMorningOrDayOrNightBackground
 }
