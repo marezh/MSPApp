@@ -21,6 +21,7 @@
 		FECE3CB42B23A33800F758BD /* DayOpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECE3CB32B23A33800F758BD /* DayOpenView.swift */; };
 		FECE3CB62B2469F800F758BD /* WeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECE3CB52B2469F800F758BD /* WeekViewController.swift */; };
 		FECE3CB92B24844F00F758BD /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FECE3CB72B24844F00F758BD /* Model.xcdatamodeld */; };
+		FED2710D2B3C982100F3F118 /* DayEditBackUP.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED2710C2B3C982100F3F118 /* DayEditBackUP.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		FECE3CB32B23A33800F758BD /* DayOpenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOpenView.swift; sourceTree = "<group>"; };
 		FECE3CB52B2469F800F758BD /* WeekViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekViewController.swift; sourceTree = "<group>"; };
 		FECE3CB82B24844F00F758BD /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		FED2710C2B3C982100F3F118 /* DayEditBackUP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayEditBackUP.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				FE3273AF2B1C87E500CC93F0 /* SettingsView.swift */,
 				FECE3CB32B23A33800F758BD /* DayOpenView.swift */,
 				FE0CE61D2B25C556001DDD60 /* DayEditView.swift */,
+				FED2710C2B3C982100F3F118 /* DayEditBackUP.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -190,6 +193,7 @@
 				FE3273B22B1C8B2F00CC93F0 /* HomeView .swift in Sources */,
 				FE3273A22B1C857700CC93F0 /* MSPApp.swift in Sources */,
 				FE0CE61E2B25C556001DDD60 /* DayEditView.swift in Sources */,
+				FED2710D2B3C982100F3F118 /* DayEditBackUP.swift in Sources */,
 				FE3273B62B1C8B6400CC93F0 /* WeekView.swift in Sources */,
 				FECE3CB62B2469F800F758BD /* WeekViewController.swift in Sources */,
 				FECE3CB92B24844F00F758BD /* Model.xcdatamodeld in Sources */,
