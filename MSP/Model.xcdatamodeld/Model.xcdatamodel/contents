@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="22G313" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
-    <entity name="Datas" representedClassName="Datas" syncable="YES" codeGenerationType="class">
-        <attribute name="datumdata" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="endbreakdata" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="endworkdata" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="startbreakdata" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="startworkdata" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="tagdata" optional="YES" attributeType="String"/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22225" systemVersion="22G436" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Days" representedClassName="Days" syncable="YES" codeGenerationType="class">
+        <attribute name="datumid" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="firma" optional="YES" attributeType="String"/>
+        <attribute name="taetigkeit" optional="YES" attributeType="String"/>
         <attribute name="totalhourswithbreakdata" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="totalhourswithoutbreak" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
 </model>

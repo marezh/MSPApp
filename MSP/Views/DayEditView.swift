@@ -32,12 +32,13 @@ struct DayEditView: View {
     @State private var PauseShowTimePickerOverlay1 = false
     @State private var showTimePickerOverlayOption = false
     @State private var PauseshowTimePickerOverlayOption = false
-
+    @Environment(\.presentationMode) var presentationMode
+    
+    
     @State private var selectedStartTime = Date()
     @State private var selectedEndTime = Date()
-    @Environment(\.presentationMode) var presentationMode
     @State private var selectedTätigkeit = 1
-
+    
     var defTagName: String
     var defTagDatum: String
     var defMonatName: String
@@ -61,51 +62,115 @@ struct DayEditView: View {
             self.Jahr = "2023"
         }
     }
-    
+    func SaveData() {
+        var TätigkeitButonString: String
+        let gesamtArbeitsStunden = StundenPickerArbeitszeitBis - StundenPickerArbeitszeitVon
+        let gesamtArbeitsMinuten = MinutenPickerArbeitszeitBis - MinutenPickerArbeitszeitVon
+        let gesamteArbeitszeitMinuten = gesamtArbeitsStunden * 60 + gesamtArbeitsMinuten
+        
+        // Berechnung der Gesamtpausenzeit in Minuten
+        let gesamtPauseStunden = PauseStundenPickerArbeitszeitBis - PauseStundenPickerArbeitszeitVon
+        let gesamtPauseMinuten = PauseMinutenPickerArbeitszeitBis - PauseMinutenPickerArbeitszeitVon
+        let gesamtePausenzeitMinuten = gesamtPauseStunden * 60 + gesamtPauseMinuten
+
+        // Berechnung der Arbeitszeit nach Abzug der Pausenzeit
+        let nettoArbeitszeitMinuten = gesamteArbeitszeitMinuten - gesamtePausenzeitMinuten
+        let nettoArbeitszeitStunden = nettoArbeitszeitMinuten / 60
+        let restNettoArbeitszeitMinuten = nettoArbeitszeitMinuten % 60
+
+        print("Gesamtarbeitszeit: \(gesamteArbeitszeitMinuten / 60) Stunden und \(gesamteArbeitszeitMinuten % 60) Minuten")
+        print("Gesamtpausenzeit: \(gesamtePausenzeitMinuten / 60) Stunden und \(gesamtePausenzeitMinuten % 60) Minuten")
+        print("Nettoarbeitszeit: \(nettoArbeitszeitStunden) Stunden und \(restNettoArbeitszeitMinuten) Minuten")
+        
+        if isSelectedMontage {
+            print("Montage ausgewählt")
+            TätigkeitButonString = "Montage"
+        }else if isSelectedProduktion {
+            print("Produktion ausgewählt")
+            TätigkeitButonString = "Produktion"
+        }else if isSelectedAnderes {
+            print("Anderes ausgewählt")
+            TätigkeitButonString = "Anderes"
+        }else {
+            print("Keine Auswahl")
+            TätigkeitButonString = "Keine Auswahl"
+        }
+    }
     
     var body: some View {
         
-        NavigationStack{
+        
+        
+        
+        
+        NavigationView{
             ZStack{
                 Image(GetTheTimeOfDayForBackground())
-                
-                VStack (spacing: 20){
-                
                 TitleFrame(
                     defTagName: defTagName,
                     defTagDatum: defTagDatum,
                     defMonatName: defMonatName,
                     defMonatDatum: defMonatDatum,
-                    jahr: Jahr).offset(x: -70, y: -10)
-                
-                WorkTimeFrame(timePickerLayout0: showTimePickerOverlay0,
-                              timePickerLayout1: showTimePickerOverlay1,
-                              timePickerLayoutOption: showTimePickerOverlayOption,
-                              hoursvon: StundenPickerArbeitszeitBis,
-                              minutesvon: MinutenPickerArbeitszeitBis,
-                              hoursbis: StundenPickerArbeitszeitVon,
-                              minutesbis: MinutenPickerArbeitszeitVon)
-                BreakeTimeFrame(timePickerLayout0: PauseShowTimePickerOverlay0,
-                                timePickerLayout1: PauseShowTimePickerOverlay1,
-                                timePickerLayoutOption: PauseshowTimePickerOverlayOption,
-                                hoursvon: PauseStundenPickerArbeitszeitBis,
-                                minutesvon: PauseMinutenPickerArbeitszeitBis,
-                                hoursbis: PauseStundenPickerArbeitszeitVon,
-                                minutesbis: PauseMinutenPickerArbeitszeitVon)
-                KommentarFrame(tatigkeit: Firmatatigkeit)
-                TaskFrame()
-                ButtonFrame().offset(x: 0, y: 40)
+                    jahr: Jahr).offset(x: 0, y: -330)
+                HStack(spacing: 34){
+                    Text("Abbrechen")
+                        .foregroundColor(.red)
+                        .button {
+                            print("schliessen")
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                    Text("Speichern")
+                        .foregroundColor(.green)
+                        .button {
+                            SaveData()
+                        }
+                }
+                .offset(x: 0, y: 350)
+                .frame(width: 360, height: 100)
+                ScrollView(showsIndicators: false){
+                    VStack(spacing: 30){
+                        WorkTimeFrame(timePickerLayout0: $showTimePickerOverlay0,
+                                      timePickerLayout1: $showTimePickerOverlay1,
+                                      timePickerLayoutOption: $showTimePickerOverlayOption,
+                                      hoursvon: $StundenPickerArbeitszeitVon,
+                                      minutesvon: $MinutenPickerArbeitszeitVon,
+                                      hoursbis: $StundenPickerArbeitszeitBis,
+                                      minutesbis: $MinutenPickerArbeitszeitBis)
+                        BreakeTimeFrame(timePickerLayout0: $PauseShowTimePickerOverlay0,
+                                        timePickerLayout1: $PauseShowTimePickerOverlay1,
+                                        timePickerLayoutOption: $PauseshowTimePickerOverlayOption,
+                                        hoursvon: $PauseStundenPickerArbeitszeitVon,
+                                        minutesvon: $PauseMinutenPickerArbeitszeitVon,
+                                        hoursbis: $PauseStundenPickerArbeitszeitBis,
+                                        minutesbis: $PauseMinutenPickerArbeitszeitBis)
+                        KommentarFrame(tatigkeit: Firmatatigkeit)
+                        TaskFrame(isSelectedProduktion: isSelectedProduktion, isSelectedMontage: isSelectedMontage, isSelectedAnderes: isSelectedAnderes)
+                    }
+                    
                     
                     
                 }
+                .frame(width: 100, height: 460)
+                .offset(x: 0, y: -30)
+                
+                
             }
             .ignoresSafeArea()
             
-         
+            
+            
         }
         .navigationBarHidden(true)
-
-           
+        .toolbar(visible ? .visible : .hidden , for: .tabBar)
+        .onAppear(){
+            visible.toggle()
+        }
+        .onDisappear(){
+            visible.toggle()
+        }
+        
+        
+        
     }
     
     struct TitleFrame: View{
@@ -116,85 +181,75 @@ struct DayEditView: View {
         var jahr: String
         var body: some View{
             let const = defTagName + ", " + defTagDatum + "." + defMonatDatum + "." + jahr
-                ZStack(){
-                    Text(const)
-                        .foregroundColor(.white)
-                        .font(.system(size: 20))
-                        .offset(x: 0, y: 0)
-                }
-                .frame(width: 250, height: 50)
-                .background(Color.black.opacity(0.1))
-                .cornerRadius(45.0)
+            ZStack(){
+                Text(const)
+                    .foregroundColor(.white)
+                    .font(.system(size: 25))
+                    .bold()
+            }
+            .cornerRadius(45.0)
         }
     }
     
     struct WorkTimeFrame: View{
-        @State var timePickerLayout0: Bool
-        @State var timePickerLayout1: Bool
-        @State var timePickerLayoutOption: Bool
-
-        @State var hoursvon: Int
-        @State var minutesvon: Int
-        @State var hoursbis: Int
-        @State var minutesbis: Int
-        @State private var currentDate = Date()
-
-
+        @Binding var timePickerLayout0: Bool
+        @Binding var timePickerLayout1: Bool
+        @Binding var timePickerLayoutOption: Bool
+        
+        @Binding var hoursvon: Int
+        @Binding var minutesvon: Int
+        @Binding var hoursbis: Int
+        @Binding var minutesbis: Int
+        //private var currentDate = Date()
+        
+        
         var body: some View {
             VStack(alignment: .leading, spacing: 1) {
                 Text("Arbeitszeit").foregroundColor(.white)
-
+                
                 ZStack {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 23) {
                         //Arbeit von
                         Button(action: {
                             withAnimation {
                                 if timePickerLayout0 || timePickerLayout1 {
-                                // Schließe das Overlay und setze timePickerLayoutOption auf false
-                                timePickerLayout0 = false
-                                timePickerLayout1 = false
-                                timePickerLayoutOption = false
+                                    // Schließe das Overlay und setze timePickerLayoutOption auf false
+                                    timePickerLayout0 = false
+                                    timePickerLayout1 = false
+                                    timePickerLayoutOption = false
                                 } else {
-                                                    // Öffne das Overlay
-                                timePickerLayout0 = true
-                                timePickerLayout1 = false
-                                timePickerLayoutOption = true
+                                    // Öffne das Overlay
+                                    timePickerLayout0 = true
+                                    timePickerLayout1 = false
+                                    timePickerLayoutOption = true
+                                }
+                                
                             }
-
-                            }
-
+                            
                         }) {
                             
                             if(hoursvon == 0 && minutesvon == 0){
                                 Text("\(getCurrentTime(Date())):00 Uhr")
-                                     .frame(width: 130, height: 13)
-                                     .padding(10)
-                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                     .cornerRadius(6)
-                                     .offset(x: -20, y: timePickerLayoutOption ? -80 : 0)
+                                    .frame(width: 130, height: 13)
+                                    .padding(10)
+                                    .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                    .cornerRadius(6)
+                                    .offset(y: timePickerLayoutOption ? -80 : 0)
                             }else{
                                 Text("\(hoursvon):\(minutesvon):00 Uhr")
-                                     .frame(width: 130, height: 13)
-                                     .padding(10)
-                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                     .cornerRadius(6)
-                                     .offset(x: -20, y: timePickerLayoutOption ? -80 : 0)
+                                    .frame(width: 130, height: 13)
+                                    .padding(10)
+                                    .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                    .cornerRadius(6)
+                                    .offset(y: timePickerLayoutOption ? -80 : 0)
                             }
-                            
-
-                            
-
-
-                                
-                            
- 
                         }
                         .foregroundColor(.black)
-
+                        
                         //Arbeit bis
                         Button(action: {
                             withAnimation {
-
+                                
                                 if timePickerLayout0 || timePickerLayout1 {
                                     // Schließe das Overlay und setze timePickerLayoutOption auf false
                                     timePickerLayout0 = false
@@ -215,20 +270,20 @@ struct DayEditView: View {
                                     .padding(10)
                                     .background(timePickerLayout1 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
                                     .cornerRadius(6)
-                                    .offset(x: 10, y: timePickerLayoutOption ? -80 : 0)
+                                    .offset(y: timePickerLayoutOption ? -80 : 0)
                             }else{
                                 Text("\(hoursbis):\(minutesbis):00 Uhr")
-                                     .frame(width: 130, height: 13)
-                                     .padding(10)
-                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                     .cornerRadius(6)
-                                     .offset(x: -20, y: timePickerLayoutOption ? -80 : 0)
+                                    .frame(width: 130, height: 13)
+                                    .padding(10)
+                                    .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                    .cornerRadius(6)
+                                    .offset(y: timePickerLayoutOption ? -80 : 0)
                             }
-
+                            
                         }
                         .foregroundColor(.black)
                     }
-
+                    
                     if timePickerLayout0 {
                         VStack {
                             GeometryReader { geometry in
@@ -242,7 +297,7 @@ struct DayEditView: View {
                                     .frame(width: geometry.size.width / 2, height: 150)
                                     .clipped()
                                     .pickerStyle(WheelPickerStyle())
-
+                                    
                                     Picker("Minuten", selection: $minutesvon) {
                                         ForEach(0..<60, id: \.self) { minute in
                                             Text("\(minute)").foregroundColor(.white)
@@ -252,7 +307,7 @@ struct DayEditView: View {
                                     .frame(width: geometry.size.width / 2, height: 150)
                                     .clipped()
                                     .pickerStyle(WheelPickerStyle())
-
+                                    
                                 }
                             }
                             .padding()
@@ -275,7 +330,7 @@ struct DayEditView: View {
                                     .frame(width: geometry.size.width / 2, height: 150)
                                     .clipped()
                                     .pickerStyle(WheelPickerStyle())
-
+                                    
                                     Picker("Minuten", selection: $minutesbis) {
                                         ForEach(0..<60, id: \.self) { minute in
                                             Text("\(minute)").foregroundColor(.white)
@@ -285,7 +340,7 @@ struct DayEditView: View {
                                     .frame(width: geometry.size.width / 2, height: 150)
                                     .clipped()
                                     .pickerStyle(WheelPickerStyle())
-
+                                    
                                 }
                             }
                             .padding()
@@ -333,7 +388,7 @@ struct DayEditView: View {
             dateFormatter.dateFormat = "mm"
             return dateFormatter.string(from: date)
         }
-
+        
         
         
         func getCurrentTimewithOneHour(_ date: Date) -> Int {
@@ -352,303 +407,335 @@ struct DayEditView: View {
             return int+1
         }
     }
-
-}
     
-    struct BreakeTimeFrame: View{
-        @State var timePickerLayout0: Bool
-        @State var timePickerLayout1: Bool
-        @State var timePickerLayoutOption: Bool
+}
 
-        @State var hoursvon: Int
-        @State var minutesvon: Int
-        @State var hoursbis: Int
-        @State var minutesbis: Int
-        @State private var currentDate = Date()
-
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: 1) {
-                Text("Pause").foregroundColor(.white)
-
-                ZStack {
-                    HStack(spacing: 0) {
-                        //Arbeit von
-                        Button(action: {
-                            withAnimation {
-                                if timePickerLayout0 || timePickerLayout1 {
+struct BreakeTimeFrame: View{
+    @Binding var timePickerLayout0: Bool
+    @Binding var timePickerLayout1: Bool
+    @Binding var timePickerLayoutOption: Bool
+    
+    @Binding var hoursvon: Int
+    @Binding var minutesvon: Int
+    @Binding var hoursbis: Int
+    @Binding var minutesbis: Int
+    @State private var currentDate = Date()
+    
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 1) {
+            Text("Pause").foregroundColor(.white)
+            
+            ZStack {
+                HStack(spacing: 23) {
+                    //Arbeit von
+                    Button(action: {
+                        withAnimation {
+                            if timePickerLayout0 || timePickerLayout1 {
                                 // Schließe das Overlay und setze timePickerLayoutOption auf false
                                 timePickerLayout0 = false
                                 timePickerLayout1 = false
                                 timePickerLayoutOption = false
-                                } else {
-                                                    // Öffne das Overlay
+                            } else {
+                                // Öffne das Overlay
                                 timePickerLayout0 = true
                                 timePickerLayout1 = false
                                 timePickerLayoutOption = true
                             }
-
+                            
+                        }
+                        
+                    }) {
+                        
+                        if(hoursvon == 0 && minutesvon == 0){
+                            Text("\(getCurrentTime(Date())):00 Uhr")
+                                .frame(width: 130, height: 13)
+                                .padding(10)
+                                .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                .cornerRadius(6)
+                                .offset(y: timePickerLayoutOption ? -80 : 0)
+                        }else{
+                            Text("\(hoursvon):\(minutesvon):00 Uhr")
+                                .frame(width: 130, height: 13)
+                                .padding(10)
+                                .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                .cornerRadius(6)
+                                .offset(y: timePickerLayoutOption ? -80 : 0)
+                        }
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                    }
+                    .foregroundColor(.black)
+                    
+                    //Arbeit bis
+                    Button(action: {
+                        withAnimation {
+                            
+                            if timePickerLayout0 || timePickerLayout1 {
+                                // Schließe das Overlay und setze timePickerLayoutOption auf false
+                                timePickerLayout0 = false
+                                timePickerLayout1 = false
+                                timePickerLayoutOption = false
+                            } else {
+                                // Öffne das Overlay
+                                timePickerLayout0 = false
+                                timePickerLayout1 = true
+                                timePickerLayoutOption = true
                             }
-
-                        }) {
-                            
-                            if(hoursvon == 0 && minutesvon == 0){
-                                Text("\(getCurrentTime(Date())):00 Uhr")
-                                     .frame(width: 130, height: 13)
-                                     .padding(10)
-                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                     .cornerRadius(6)
-                                     .offset(x: -20, y: timePickerLayoutOption ? -80 : 0)
-                            }else{
-                                Text("\(hoursvon):\(minutesvon):00 Uhr")
-                                     .frame(width: 130, height: 13)
-                                     .padding(10)
-                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                     .cornerRadius(6)
-                                     .offset(x: -20, y: timePickerLayoutOption ? -80 : 0)
-                            }
-                            
-
-                            
-
-
+                        }
+                    }) {
+                        
+                        if(hoursbis == 0 && minutesbis == 0) {
+                            Text("\(getCurrentTimewithOneHour(Date())):\(getCurrentTimeOnlyMinutes(Date())):00")
+                                .frame(width: 130, height: 13)
+                                .padding(10)
+                                .background(timePickerLayout1 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                .cornerRadius(6)
+                                .offset(y: timePickerLayoutOption ? -80 : 0)
+                        }else{
+                            Text("\(hoursbis):\(minutesbis):00")
+                                .frame(width: 130, height: 13)
+                                .padding(10)
+                                .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
+                                .cornerRadius(6)
+                                .offset(y: timePickerLayoutOption ? -80 : 0)
+                        }
+                        
+                    }
+                    .foregroundColor(.black)
+                }
+                
+                if timePickerLayout0 {
+                    VStack {
+                        GeometryReader { geometry in
+                            HStack (spacing: 0){
+                                Picker("Stunden", selection: $hoursvon) {
+                                    ForEach(0..<24, id: \.self) { hour in
+                                        Text("\(hour)").foregroundColor(.white)
+                                            .tag(hour)
+                                    }
+                                }
+                                .frame(width: geometry.size.width / 2, height: 150)
+                                .clipped()
+                                .pickerStyle(WheelPickerStyle())
                                 
-                            
- 
+                                Picker("Minuten", selection: $minutesvon) {
+                                    ForEach(0..<60, id: \.self) { minute in
+                                        Text("\(minute)").foregroundColor(.white)
+                                            .tag(minute)
+                                    }
+                                }
+                                .frame(width: geometry.size.width / 2, height: 150)
+                                .clipped()
+                                .pickerStyle(WheelPickerStyle())
+                                
+                            }
                         }
-                        .foregroundColor(.black)
+                        .padding()
+                        .cornerRadius(10)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .offset(y: 60)
+                }
+                
+                if timePickerLayout1 {
+                    VStack {
+                        GeometryReader { geometry in
+                            HStack (spacing: 0){
+                                Picker("Stunden", selection: $hoursbis) {
+                                    ForEach(0..<24, id: \.self) { hour in
+                                        Text("\(hour)").foregroundColor(.white)
+                                            .tag(hour)
+                                    }
+                                }
+                                .frame(width: geometry.size.width / 2, height: 150)
+                                .clipped()
+                                .pickerStyle(WheelPickerStyle())
+                                
+                                Picker("Minuten", selection: $minutesbis) {
+                                    ForEach(0..<60, id: \.self) { minute in
+                                        Text("\(minute)").foregroundColor(.white)
+                                            .tag(minute)
+                                    }
+                                }
+                                .frame(width: geometry.size.width / 2, height: 150)
+                                .clipped()
+                                .pickerStyle(WheelPickerStyle())
+                                
+                            }
+                        }
+                        .padding()
+                        .cornerRadius(10)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .offset(y: 60)
+                }
+                
+            }
+            .frame(width: 360, height: timePickerLayoutOption ? 240 : 60)
+            .background(Color.black.opacity(0.1))
+            .scaleEffect(x: 1.0, y: timePickerLayoutOption ? 0.9 : 1.0) // Skalierung anpassen
+            .onTapGesture {
+                withAnimation {
+                    timePickerLayout0 = false
+                    timePickerLayout1 = false
+                    timePickerLayoutOption = false
+                }
+            }
+        }
+    }
+    func getCurrentTime(_ date: Date) -> String {
+        
+        
+        let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "de_DE")
+            return formatter
+        }()
+        
+        dateFormatter.dateFormat = "HH:mm"
+        return dateFormatter.string(from: date)
+    }
+    
+    func getCurrentTimeOnlyMinutes(_ date: Date) -> String {
+        
+        
+        let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "de_DE")
+            return formatter
+        }()
+        
+        dateFormatter.dateFormat = "mm"
+        return dateFormatter.string(from: date)
+    }
+    
+    
+    
+    func getCurrentTimewithOneHour(_ date: Date) -> Int {
+        var int = 0
+        
+        let dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "de_DE")
+            return formatter
+        }()
+        
+        dateFormatter.dateFormat = "HH"
+        
+        int = Int(dateFormatter.string(from: date)) ?? 0
+        
+        return int+1
+    }
+}
 
-                        //Arbeit bis
-                        Button(action: {
+
+
+
+
+
+struct TaskFrame: View{
+    @State var isSelectedProduktion: Bool
+    @State var isSelectedMontage: Bool
+    @State var isSelectedAnderes: Bool
+    
+    var body: some View{
+        VStack(alignment: .leading, spacing: 1){
+            Text("Tätigkeit").foregroundColor(.white)
+            
+            ZStack{
+                HStack(spacing: 20){
+                    SelectedButtonItem(isSelected: $isSelectedProduktion, color: .blue, text: "Produktion")
+                        .frame(width: 100)
+                        .onTapGesture {
                             withAnimation {
-
-                                if timePickerLayout0 || timePickerLayout1 {
-                                    // Schließe das Overlay und setze timePickerLayoutOption auf false
-                                    timePickerLayout0 = false
-                                    timePickerLayout1 = false
-                                    timePickerLayoutOption = false
-                                } else {
-                                    // Öffne das Overlay
-                                    timePickerLayout0 = false
-                                    timePickerLayout1 = true
-                                    timePickerLayoutOption = true
+                                isSelectedProduktion.toggle()
+                                if(isSelectedProduktion) {
+                                    isSelectedMontage = false
+                                    isSelectedAnderes = false
                                 }
                             }
-                        }) {
                             
-                            if(hoursbis == 0 && minutesbis == 0) {
-                                Text("\(getCurrentTimewithOneHour(Date())):\(getCurrentTimeOnlyMinutes(Date())):00")
-                                    .frame(width: 130, height: 13)
-                                    .padding(10)
-                                    .background(timePickerLayout1 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                    .cornerRadius(6)
-                                    .offset(x: 10, y: timePickerLayoutOption ? -80 : 0)
-                            }else{
-                                Text("\(hoursbis):\(minutesbis):00")
-                                     .frame(width: 130, height: 13)
-                                     .padding(10)
-                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                     .cornerRadius(6)
-                                     .offset(x: -20, y: timePickerLayoutOption ? -80 : 0)
-                            }
-
                         }
-                        .foregroundColor(.black)
-                    }
-
-                    if timePickerLayout0 {
-                        VStack {
-                            GeometryReader { geometry in
-                                HStack (spacing: 0){
-                                    Picker("Stunden", selection: $hoursvon) {
-                                        ForEach(0..<24, id: \.self) { hour in
-                                            Text("\(hour)").foregroundColor(.white)
-                                                .tag(hour)
-                                        }
-                                    }
-                                    .frame(width: geometry.size.width / 2, height: 150)
-                                    .clipped()
-                                    .pickerStyle(WheelPickerStyle())
-
-                                    Picker("Minuten", selection: $minutesvon) {
-                                        ForEach(0..<60, id: \.self) { minute in
-                                            Text("\(minute)").foregroundColor(.white)
-                                                .tag(minute)
-                                        }
-                                    }
-                                    .frame(width: geometry.size.width / 2, height: 150)
-                                    .clipped()
-                                    .pickerStyle(WheelPickerStyle())
-
+                    
+                    
+                    SelectedButtonItem(isSelected: $isSelectedMontage, color: .blue, text: "Montage")
+                        .frame(width: 90)
+                        .onTapGesture {
+                            withAnimation {
+                                isSelectedMontage.toggle()
+                                if(isSelectedMontage) {
+                                    isSelectedProduktion = false
+                                    isSelectedAnderes = false
                                 }
                             }
-                            .padding()
-                            .cornerRadius(10)
+                            
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .offset(y: 60)
-                    }
                     
-                    if timePickerLayout1 {
-                        VStack {
-                            GeometryReader { geometry in
-                                HStack (spacing: 0){
-                                    Picker("Stunden", selection: $hoursbis) {
-                                        ForEach(0..<24, id: \.self) { hour in
-                                            Text("\(hour)").foregroundColor(.white)
-                                                .tag(hour)
-                                        }
-                                    }
-                                    .frame(width: geometry.size.width / 2, height: 150)
-                                    .clipped()
-                                    .pickerStyle(WheelPickerStyle())
-
-                                    Picker("Minuten", selection: $minutesbis) {
-                                        ForEach(0..<60, id: \.self) { minute in
-                                            Text("\(minute)").foregroundColor(.white)
-                                                .tag(minute)
-                                        }
-                                    }
-                                    .frame(width: geometry.size.width / 2, height: 150)
-                                    .clipped()
-                                    .pickerStyle(WheelPickerStyle())
-
+                    
+                    SelectedButtonItem(isSelected: $isSelectedAnderes, color: .blue, text: "Anderes")
+                        .frame(width: 90)
+                        .onTapGesture {
+                            withAnimation {
+                                isSelectedAnderes.toggle()
+                                if(isSelectedAnderes) {
+                                    isSelectedMontage = false
+                                    isSelectedProduktion = false
                                 }
                             }
-                            .padding()
-                            .cornerRadius(10)
+                            
                         }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                        .offset(y: 60)
-                    }
-                    
-                }
-                .frame(width: 360, height: timePickerLayoutOption ? 240 : 60)
-                .background(Color.black.opacity(0.1))
-                .scaleEffect(x: 1.0, y: timePickerLayoutOption ? 0.9 : 1.0) // Skalierung anpassen
-                .onTapGesture {
-                    withAnimation {
-                        timePickerLayout0 = false
-                        timePickerLayout1 = false
-                        timePickerLayoutOption = false
-                    }
                 }
             }
+            .frame(width: 360, height: 50)
+            .background(Color.black.opacity(0.1))
         }
-        func getCurrentTime(_ date: Date) -> String {
-            
-            
-            let dateFormatter: DateFormatter = {
-                let formatter = DateFormatter()
-                formatter.locale = Locale(identifier: "de_DE")
-                return formatter
-            }()
-            
-            dateFormatter.dateFormat = "HH:mm"
-            return dateFormatter.string(from: date)
-        }
+    }
+}
+struct KommentarFrame: View{
+    @State var tatigkeit: String
+    
+    var body: some View{
         
-        func getCurrentTimeOnlyMinutes(_ date: Date) -> String {
+        VStack(alignment: .leading, spacing: 1){
+            Text("Firma/Tätigkeit").foregroundColor(.white)
             
-            
-            let dateFormatter: DateFormatter = {
-                let formatter = DateFormatter()
-                formatter.locale = Locale(identifier: "de_DE")
-                return formatter
-            }()
-            
-            dateFormatter.dateFormat = "mm"
-            return dateFormatter.string(from: date)
-        }
-
-        
-        
-        func getCurrentTimewithOneHour(_ date: Date) -> Int {
-            var int = 0
-            
-            let dateFormatter: DateFormatter = {
-                let formatter = DateFormatter()
-                formatter.locale = Locale(identifier: "de_DE")
-                return formatter
-            }()
-            
-            dateFormatter.dateFormat = "HH"
-            
-            int = Int(dateFormatter.string(from: date)) ?? 0
-            
-            return int+1
-        }
-    }
-
-
-
-
-    
-    
-    struct TaskFrame: View{
-        var body: some View{
-            VStack(alignment: .leading, spacing: 1){
-                Text("Tätigkeit").foregroundColor(.white)
-                
-                ZStack{
+            ZStack{
+                HStack{
+                    TextField("Eingeben", text: $tatigkeit).foregroundColor(.white)
                     
-                }
-                .frame(width: 360, height: 100)
-                .background(Color.black.opacity(0.1))
-            }
-        }
-    }
-    
-    struct ButtonFrame: View{
-        var body: some View{
-            VStack(alignment: .leading, spacing: 0){
-                Text("Buttons").foregroundColor(.white)
+                }.frame(width: 360, height: 50)
                 
-                ZStack{
-                    
-                }
-                .frame(width: 360, height: 100)
-                .background(Color.black.opacity(0.1))
             }
+            .frame(width: 360, height: 50)
+            .background(Color.black.opacity(0.1))
         }
     }
-    struct KommentarFrame: View{
-        @State var tatigkeit: String
+}
 
-        var body: some View{
-            
-            VStack(alignment: .leading, spacing: 1){
-                Text("Kommentar").foregroundColor(.white)
-                
-                ZStack{
-                    HStack{
-                        TextField("Eingeben", text: $tatigkeit).foregroundColor(.white)
 
-                    }.frame(width: 360, height: 50)
-                    
-                }
-                .frame(width: 360, height: 50)
-                .background(Color.black.opacity(0.1))
-            }
-        }
-    }
-    
 
 func getTimeNowForTitle() -> String {
-   var st = ""
-   let now = Date()
-   let formatter = DateFormatter()
-   formatter.dateFormat = "EEEE.d.MMMM.M.yyyy"
-   formatter.locale = Locale(identifier: "de_DE")
-   st = formatter.string(from: now)
-   return st
+    var st = ""
+    let now = Date()
+    let formatter = DateFormatter()
+    formatter.dateFormat = "EEEE.d.MMMM.M.yyyy"
+    formatter.locale = Locale(identifier: "de_DE")
+    st = formatter.string(from: now)
+    return st
 }
 func getYesterdayDateString() -> String {
-   let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
-   let formatter = DateFormatter()
-   formatter.dateFormat = "EEEE.d.MMMM.M.yyyy"
-   formatter.locale = Locale(identifier: "de_DE")
-   return formatter.string(from: yesterday)
+    let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+    let formatter = DateFormatter()
+    formatter.dateFormat = "EEEE.d.MMMM.M.yyyy"
+    formatter.locale = Locale(identifier: "de_DE")
+    return formatter.string(from: yesterday)
 }
 
 #Preview {
