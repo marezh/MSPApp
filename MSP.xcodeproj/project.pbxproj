@@ -18,6 +18,9 @@
 		FE3273B42B1C8B4700CC93F0 /* ExportView .swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3273B32B1C8B4700CC93F0 /* ExportView .swift */; };
 		FE3273B62B1C8B6400CC93F0 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE3273B52B1C8B6400CC93F0 /* WeekView.swift */; };
 		FEAE77AE2B4421F800C2B0DB /* ButtonWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEAE77AD2B4421F800C2B0DB /* ButtonWrapper.swift */; };
+		FEAE77B22B44680F00C2B0DB /* DataBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEAE77B12B44680F00C2B0DB /* DataBase.swift */; };
+		FEAE77B52B45C31B00C2B0DB /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = FEAE77B42B45C31B00C2B0DB /* Realm */; };
+		FEAE77B72B45C31B00C2B0DB /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FEAE77B62B45C31B00C2B0DB /* RealmSwift */; };
 		FECE3CB02B236F0400F758BD /* DayTimeWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECE3CAF2B236F0400F758BD /* DayTimeWrapper.swift */; };
 		FECE3CB42B23A33800F758BD /* DayOpenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECE3CB32B23A33800F758BD /* DayOpenView.swift */; };
 		FECE3CB62B2469F800F758BD /* WeekViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECE3CB52B2469F800F758BD /* WeekViewController.swift */; };
@@ -37,6 +40,7 @@
 		FE3273B32B1C8B4700CC93F0 /* ExportView .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ExportView .swift"; sourceTree = "<group>"; };
 		FE3273B52B1C8B6400CC93F0 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		FEAE77AD2B4421F800C2B0DB /* ButtonWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonWrapper.swift; sourceTree = "<group>"; };
+		FEAE77B12B44680F00C2B0DB /* DataBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBase.swift; sourceTree = "<group>"; };
 		FECE3CAF2B236F0400F758BD /* DayTimeWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayTimeWrapper.swift; sourceTree = "<group>"; };
 		FECE3CB32B23A33800F758BD /* DayOpenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOpenView.swift; sourceTree = "<group>"; };
 		FECE3CB52B2469F800F758BD /* WeekViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekViewController.swift; sourceTree = "<group>"; };
@@ -48,6 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FEAE77B72B45C31B00C2B0DB /* RealmSwift in Frameworks */,
+				FEAE77B52B45C31B00C2B0DB /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +87,7 @@
 		FE3273A02B1C857700CC93F0 /* MSP */ = {
 			isa = PBXGroup;
 			children = (
+				FEAE77B12B44680F00C2B0DB /* DataBase.swift */,
 				FE3273A12B1C857700CC93F0 /* MSPApp.swift */,
 				FE3273A32B1C857700CC93F0 /* ContentView.swift */,
 				FE3273A52B1C857B00CC93F0 /* Assets.xcassets */,
@@ -132,6 +139,10 @@
 			dependencies = (
 			);
 			name = MSP;
+			packageProductDependencies = (
+				FEAE77B42B45C31B00C2B0DB /* Realm */,
+				FEAE77B62B45C31B00C2B0DB /* RealmSwift */,
+			);
 			productName = MSP;
 			productReference = FE32739E2B1C857700CC93F0 /* MSP.app */;
 			productType = "com.apple.product-type.application";
@@ -160,6 +171,9 @@
 				Base,
 			);
 			mainGroup = FE3273952B1C857700CC93F0;
+			packageReferences = (
+				FEAE77B32B45C31B00C2B0DB /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			productRefGroup = FE32739F2B1C857700CC93F0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -190,6 +204,7 @@
 				FE3273A42B1C857700CC93F0 /* ContentView.swift in Sources */,
 				FE3273B42B1C8B4700CC93F0 /* ExportView .swift in Sources */,
 				FE26766D2B2EEB690005BD55 /* SelectedButtonItem.swift in Sources */,
+				FEAE77B22B44680F00C2B0DB /* DataBase.swift in Sources */,
 				FE3273B22B1C8B2F00CC93F0 /* HomeView .swift in Sources */,
 				FE3273A22B1C857700CC93F0 /* MSPApp.swift in Sources */,
 				FE0CE61E2B25C556001DDD60 /* DayEditView.swift in Sources */,
@@ -404,6 +419,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FEAE77B32B45C31B00C2B0DB /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.45.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FEAE77B42B45C31B00C2B0DB /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEAE77B32B45C31B00C2B0DB /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		FEAE77B62B45C31B00C2B0DB /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FEAE77B32B45C31B00C2B0DB /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FE3273962B1C857700CC93F0 /* Project object */;
 }

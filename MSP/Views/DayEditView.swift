@@ -33,8 +33,8 @@ struct DayEditView: View {
     @State private var showTimePickerOverlayOption = false
     @State private var PauseshowTimePickerOverlayOption = false
     @Environment(\.presentationMode) var presentationMode
-    
-    
+    @StateObject private var realmManager = RealmManager()
+
     @State private var selectedStartTime = Date()
     @State private var selectedEndTime = Date()
     @State private var selectedTätigkeit = 1
@@ -62,6 +62,9 @@ struct DayEditView: View {
             self.Jahr = "2023"
         }
     }
+   
+    
+    
     func SaveData() {
         var TätigkeitButonString: String
         let gesamtArbeitsStunden = StundenPickerArbeitszeitBis - StundenPickerArbeitszeitVon
@@ -72,12 +75,12 @@ struct DayEditView: View {
         let gesamtPauseStunden = PauseStundenPickerArbeitszeitBis - PauseStundenPickerArbeitszeitVon
         let gesamtPauseMinuten = PauseMinutenPickerArbeitszeitBis - PauseMinutenPickerArbeitszeitVon
         let gesamtePausenzeitMinuten = gesamtPauseStunden * 60 + gesamtPauseMinuten
-
+        
         // Berechnung der Arbeitszeit nach Abzug der Pausenzeit
         let nettoArbeitszeitMinuten = gesamteArbeitszeitMinuten - gesamtePausenzeitMinuten
         let nettoArbeitszeitStunden = nettoArbeitszeitMinuten / 60
         let restNettoArbeitszeitMinuten = nettoArbeitszeitMinuten % 60
-
+        
         print("Gesamtarbeitszeit: \(gesamteArbeitszeitMinuten / 60) Stunden und \(gesamteArbeitszeitMinuten % 60) Minuten")
         print("Gesamtpausenzeit: \(gesamtePausenzeitMinuten / 60) Stunden und \(gesamtePausenzeitMinuten % 60) Minuten")
         print("Nettoarbeitszeit: \(nettoArbeitszeitStunden) Stunden und \(restNettoArbeitszeitMinuten) Minuten")
@@ -95,14 +98,13 @@ struct DayEditView: View {
             print("Keine Auswahl")
             TätigkeitButonString = "Keine Auswahl"
         }
+        realmManager.addDay(dayId: progreeda, totalHours: nettoArbeitszeitStunden, totalMinutes: restNettoArbeitszeitMinuten)
+        
+        
+        print("\(realmManager.getTotalHours(for: progreeda))")
     }
     
     var body: some View {
-        
-        
-        
-        
-        
         NavigationView{
             ZStack{
                 Image(GetTheTimeOfDayForBackground())
@@ -123,6 +125,7 @@ struct DayEditView: View {
                         .foregroundColor(.green)
                         .button {
                             SaveData()
+                            presentationMode.wrappedValue.dismiss()
                         }
                 }
                 .offset(x: 0, y: 350)
@@ -131,14 +134,15 @@ struct DayEditView: View {
                     VStack(spacing: 30){
                         WorkTimeFrame(timePickerLayout0: $showTimePickerOverlay0,
                                       timePickerLayout1: $showTimePickerOverlay1,
-                                      timePickerLayoutOption: $showTimePickerOverlayOption,
+                                      PausetimePickerLayout0: $PauseShowTimePickerOverlay0, PausetimePickerLayout1: $PauseShowTimePickerOverlay1,
+                                      timePickerLayoutOption: $showTimePickerOverlayOption,timePickerLayoutOptionPause: $PauseshowTimePickerOverlayOption,
                                       hoursvon: $StundenPickerArbeitszeitVon,
                                       minutesvon: $MinutenPickerArbeitszeitVon,
                                       hoursbis: $StundenPickerArbeitszeitBis,
                                       minutesbis: $MinutenPickerArbeitszeitBis)
                         BreakeTimeFrame(timePickerLayout0: $PauseShowTimePickerOverlay0,
-                                        timePickerLayout1: $PauseShowTimePickerOverlay1,
-                                        timePickerLayoutOption: $PauseshowTimePickerOverlayOption,
+                                        timePickerLayout1: $PauseShowTimePickerOverlay1, WorktimePickerLayout0: $showTimePickerOverlay0, WorktimePickerLayout1: $showTimePickerOverlay1,
+                                        timePickerLayoutOption: $PauseshowTimePickerOverlayOption,timePickerLayoutOptionWorkFrame: $showTimePickerOverlayOption,
                                         hoursvon: $PauseStundenPickerArbeitszeitVon,
                                         minutesvon: $PauseMinutenPickerArbeitszeitVon,
                                         hoursbis: $PauseStundenPickerArbeitszeitBis,
@@ -194,7 +198,11 @@ struct DayEditView: View {
     struct WorkTimeFrame: View{
         @Binding var timePickerLayout0: Bool
         @Binding var timePickerLayout1: Bool
+        @Binding var PausetimePickerLayout0: Bool
+        @Binding var PausetimePickerLayout1: Bool
         @Binding var timePickerLayoutOption: Bool
+        @Binding var timePickerLayoutOptionPause: Bool
+
         
         @Binding var hoursvon: Int
         @Binding var minutesvon: Int
@@ -212,6 +220,9 @@ struct DayEditView: View {
                         //Arbeit von
                         Button(action: {
                             withAnimation {
+                                timePickerLayoutOptionPause = false
+                                PausetimePickerLayout0 = false
+                                PausetimePickerLayout1 = false
                                 if timePickerLayout0 || timePickerLayout1 {
                                     // Schließe das Overlay und setze timePickerLayoutOption auf false
                                     timePickerLayout0 = false
@@ -222,34 +233,30 @@ struct DayEditView: View {
                                     timePickerLayout0 = true
                                     timePickerLayout1 = false
                                     timePickerLayoutOption = true
+                                    
+                                
                                 }
                                 
                             }
                             
                         }) {
                             
-                            if(hoursvon == 0 && minutesvon == 0){
-                                Text("\(getCurrentTime(Date())):00 Uhr")
+                            Text("\(String(format: "%02d", hoursvon)):\(String(format: "%02d", minutesvon)) Uhr")
                                     .frame(width: 130, height: 13)
                                     .padding(10)
                                     .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
                                     .cornerRadius(6)
                                     .offset(y: timePickerLayoutOption ? -80 : 0)
-                            }else{
-                                Text("\(hoursvon):\(minutesvon):00 Uhr")
-                                    .frame(width: 130, height: 13)
-                                    .padding(10)
-                                    .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                    .cornerRadius(6)
-                                    .offset(y: timePickerLayoutOption ? -80 : 0)
-                            }
+                           
                         }
                         .foregroundColor(.black)
                         
                         //Arbeit bis
                         Button(action: {
                             withAnimation {
-                                
+                                timePickerLayoutOptionPause = false
+                                PausetimePickerLayout0 = false
+                                PausetimePickerLayout1 = false
                                 if timePickerLayout0 || timePickerLayout1 {
                                     // Schließe das Overlay und setze timePickerLayoutOption auf false
                                     timePickerLayout0 = false
@@ -259,26 +266,21 @@ struct DayEditView: View {
                                     // Öffne das Overlay
                                     timePickerLayout0 = false
                                     timePickerLayout1 = true
+                                    PausetimePickerLayout0 = false
+                                    PausetimePickerLayout1 = false
                                     timePickerLayoutOption = true
                                 }
                             }
                         }) {
                             
-                            if(hoursbis == 0 && minutesbis == 0) {
-                                Text("\(getCurrentTimewithOneHour(Date())):\(getCurrentTimeOnlyMinutes(Date())):00 Uhr")
+                            Text("\(String(format: "%02d", hoursbis)):\(String(format: "%02d", minutesbis)) Uhr")
+
                                     .frame(width: 130, height: 13)
                                     .padding(10)
                                     .background(timePickerLayout1 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
                                     .cornerRadius(6)
                                     .offset(y: timePickerLayoutOption ? -80 : 0)
-                            }else{
-                                Text("\(hoursbis):\(minutesbis):00 Uhr")
-                                    .frame(width: 130, height: 13)
-                                    .padding(10)
-                                    .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                    .cornerRadius(6)
-                                    .offset(y: timePickerLayoutOption ? -80 : 0)
-                            }
+                            
                             
                         }
                         .foregroundColor(.black)
@@ -413,8 +415,10 @@ struct DayEditView: View {
 struct BreakeTimeFrame: View{
     @Binding var timePickerLayout0: Bool
     @Binding var timePickerLayout1: Bool
+    @Binding var WorktimePickerLayout0: Bool
+    @Binding var WorktimePickerLayout1: Bool
     @Binding var timePickerLayoutOption: Bool
-    
+    @Binding var timePickerLayoutOptionWorkFrame: Bool
     @Binding var hoursvon: Int
     @Binding var minutesvon: Int
     @Binding var hoursbis: Int
@@ -431,6 +435,10 @@ struct BreakeTimeFrame: View{
                     //Arbeit von
                     Button(action: {
                         withAnimation {
+                            timePickerLayoutOptionWorkFrame = false
+                            WorktimePickerLayout0 = false
+                            WorktimePickerLayout1 = false
+
                             if timePickerLayout0 || timePickerLayout1 {
                                 // Schließe das Overlay und setze timePickerLayoutOption auf false
                                 timePickerLayout0 = false
@@ -447,21 +455,13 @@ struct BreakeTimeFrame: View{
                         
                     }) {
                         
-                        if(hoursvon == 0 && minutesvon == 0){
-                            Text("\(getCurrentTime(Date())):00 Uhr")
+                        Text("\(String(format: "%02d", hoursvon)):\(String(format: "%02d", minutesvon)) Uhr")
                                 .frame(width: 130, height: 13)
                                 .padding(10)
                                 .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
                                 .cornerRadius(6)
                                 .offset(y: timePickerLayoutOption ? -80 : 0)
-                        }else{
-                            Text("\(hoursvon):\(minutesvon):00 Uhr")
-                                .frame(width: 130, height: 13)
-                                .padding(10)
-                                .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                .cornerRadius(6)
-                                .offset(y: timePickerLayoutOption ? -80 : 0)
-                        }
+                      
                         
                         
                         
@@ -476,7 +476,9 @@ struct BreakeTimeFrame: View{
                     //Arbeit bis
                     Button(action: {
                         withAnimation {
-                            
+                            timePickerLayoutOptionWorkFrame = false
+                            WorktimePickerLayout0 = false
+                            WorktimePickerLayout1 = false
                             if timePickerLayout0 || timePickerLayout1 {
                                 // Schließe das Overlay und setze timePickerLayoutOption auf false
                                 timePickerLayout0 = false
@@ -491,21 +493,13 @@ struct BreakeTimeFrame: View{
                         }
                     }) {
                         
-                        if(hoursbis == 0 && minutesbis == 0) {
-                            Text("\(getCurrentTimewithOneHour(Date())):\(getCurrentTimeOnlyMinutes(Date())):00")
+                        Text("\(String(format: "%02d", hoursbis)):\(String(format: "%02d", minutesbis)) Uhr")
                                 .frame(width: 130, height: 13)
                                 .padding(10)
                                 .background(timePickerLayout1 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
                                 .cornerRadius(6)
                                 .offset(y: timePickerLayoutOption ? -80 : 0)
-                        }else{
-                            Text("\(hoursbis):\(minutesbis):00")
-                                .frame(width: 130, height: 13)
-                                .padding(10)
-                                .background(timePickerLayout0 ? Color.green.opacity(0.3) : Color.gray.opacity(0.3))
-                                .cornerRadius(6)
-                                .offset(y: timePickerLayoutOption ? -80 : 0)
-                        }
+                        
                         
                     }
                     .foregroundColor(.black)

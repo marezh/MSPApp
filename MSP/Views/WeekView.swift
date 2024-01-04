@@ -10,9 +10,9 @@ import Combine
 
 
 struct WeekView: View {
-    
-    var date: Date
+    @StateObject private var realmManager = RealmManager()
 
+    var date: Date
     var body: some View {
 
         NavigationView {
@@ -29,7 +29,7 @@ struct WeekView: View {
                         HStack(spacing: 10) {
                            
                             ForEach(getAllYears(), id: \.self) { year in
-                                WeekColumnView(year: year, baseDate: date).scrollTargetLayout()
+                                WeekColumnView(year: year, baseDate: date, realmManager: realmManager).scrollTargetLayout()
 
                             }
                         }
@@ -38,7 +38,9 @@ struct WeekView: View {
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 scrollView.scrollTo(getId(week: date), anchor: .center)
-
+                                print("Normal: ")
+                                print(date)
+                                print("Mit Converter: \(date)")
                               }
                             
                         }
@@ -63,6 +65,7 @@ func getId(week: Date) -> String {
 struct WeekColumnView: View {
     var year: Date
     var baseDate: Date
+    var realmManager: RealmManager  // Hinzugefügt
     
     var body: some View {
         LazyHStack(spacing: 10) {
@@ -71,8 +74,10 @@ struct WeekColumnView: View {
                 VStack(spacing: 10) {
                     ForEach(0..<7) { day in
                         if let dayDate = WeekViewController.calendar.date(byAdding: .day, value: day, to: week) {
-                            DayView(date: dayDate).scrollTargetLayout()
-
+                            
+                            
+                            DayView(date: dayDate, realmManager: realmManager ).scrollTargetLayout()
+                            
                         }
                     }
                 }
@@ -80,21 +85,52 @@ struct WeekColumnView: View {
             }
         }
     }
+    private func dayFullInformation(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "de_DE")
+        formatter.dateFormat = "EEEE d MMMM M yyyy"
+        return formatter.string(from: date)
+        
+    }
 }
 
 struct DayView: View {
     var date: Date
-    
+    var realmManager: RealmManager
+    var totalHours: Int {
+        realmManager.getTotalHours(for: "\(dayFullInformation(date))")
+    }
+
+    var calculatedValue: CGFloat {
+        CGFloat(Double(totalHours) / 9.0) // 9 Stunden entsprechen 100%
+    }
+    var hoursColor: Color {
+        switch totalHours {
+        case 0:
+            return .gray
+        case 1...5:
+            return .red
+        case 6...7:
+            return .yellow
+        default:
+            return .green
+        }
+    }
+    var percentage: Int {
+        Int((Double(totalHours) / 9.0) * 100)
+    }
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "de_DE")
         return formatter
     }()
+
     
     var isToday: Bool {
         let calendar = Calendar.current
         return calendar.isDateInToday(date)
     }
+   
     
     var body: some View {
         
@@ -105,11 +141,15 @@ struct DayView: View {
                     
                     ZStack(){
                         Circle()
-                            .stroke(.gray.opacity(0.4), style: StrokeStyle(lineWidth: 3))
-                        Circle()
-                            .trim(from: 0, to: 0.6)
-                            .stroke(.green, style: StrokeStyle(lineWidth: 3, lineCap: .round))
-                            .rotationEffect(.degrees(-60))
+                                .stroke(.gray.opacity(0.4), style: StrokeStyle(lineWidth: 3))
+                                    Circle()
+                                            .trim(from: 0, to: CGFloat(min(Double(totalHours) / 9.0, 1.0)))
+                                            .stroke(hoursColor, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                                            .rotationEffect(.degrees(-90))
+                                               
+                                               Text("\(percentage)%")
+                                                   .font(.system(size: 10))
+                                                   .foregroundColor(hoursColor)
                         
                     }.offset(x: 10, y: 0)
                         .frame(width: 45, height: 45)
@@ -122,7 +162,13 @@ struct DayView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.leading, 80)
                             
-                            Text("0Std.0min").offset(x: 50,      y:0).foregroundColor(.gray) //Daten einfÃ¼gen
+                            Text("\(realmManager.getTotalHours(for: "\(dayFullInformation(date))"))Std. \(realmManager.getTotalMinutes(for: "\(dayFullInformation(date))"))Min").offset(x: 50,y:0).foregroundColor(    realmManager.getTotalHours(for: "\(dayFullInformation(date))") == 0 ? Color.gray :
+                                                                                                                                                                                                                        realmManager.getTotalHours(for: "\(dayFullInformation(date))") > 5 && realmManager.getTotalHours(for: "\(dayFullInformation(date))") < 7 ? Color.yellow :
+                                                                                                                                                                                                                        realmManager.getTotalHours(for: "\(dayFullInformation(date))") >= 7 ? Color.green : Color.red)
+                            
+                            
+                            //Daten einfÃ¼gen
+                            
                         }
                         
                        
@@ -145,6 +191,7 @@ struct DayView: View {
             )
             .background(Color.black.opacity(0.4))
             .cornerRadius(10)
+        }.onAppear(){
         }
         
     }
