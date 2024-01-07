@@ -92,4 +92,3 @@ class RealmManager: ObservableObject {
     
     // Weitere Methoden zur Datenabfrage oder -manipulation...
 }
-

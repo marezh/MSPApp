@@ -129,7 +129,7 @@ struct DayOpenView: View {
             }
             .ignoresSafeArea()
             .navigationBarHidden(true)
-            .toolbar(visible ? .visible : .hidden , for: .tabBar)            
+            .toolbar(visible ? .visible : .hidden , for: .tabBar)
             .onAppear(){
                 print("geöffnet: DayOpenView")
                 visible.toggle()
